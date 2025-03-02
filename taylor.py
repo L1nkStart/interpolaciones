@@ -1,9 +1,11 @@
 # Desarrollado por Juan Diego Cordero.
 
 import sympy as sp
+from math import factorial
 from matplotlib import pyplot as plt
 
 class Taylor:
+    # Método constructor de la clase Taylor.
     def __init__(self, x, fx, n, x0, k = 0, polinomio = 0):
         self.x = x
         self.fx = fx
@@ -11,34 +13,20 @@ class Taylor:
         self.x0 = x0
         self.k = k
         self.polinomio = polinomio
-
-    def diferenciacion(self, k):
-        return self.fx.diff(self.x, k)
     
-    def factorial(self, x):
-        factorial = 1
-        for i in range(1, x + 1):
-            factorial *= i
-        return factorial
-            
+    # Método que ejecuta la interpolación de Taylor.
     def interpolacion(self):
         while not (self.k > self.n):
-            f = self.diferenciacion(self.k)
+            f = self.fx.diff(self.x, self.k)
             f0 = f.subs(self.x, self.x0)
-            divisor = self.factorial(self.k)
+            divisor = factorial(self.k)
             self.polinomio += (f0/divisor)*(self.x - self.x0)**self.k
             self.k += 1
         print(f"f(x) = {self.fx}\nP(x) = {self.polinomio}\n")
 
-    def dominio(self, a, b):
-        dominio = []
-        while a < b:
-            a += 0.1
-            dominio.append(a)
-        return dominio
-
+    # Método para graficar la interpolación de Taylor.
     def graficarinterpolacion(self, a, b):
-        x = self.dominio(a, b)
+        x = [a + i * 0.1 for i in range(int((b - a) / 0.1))]
         y = [self.fx.subs(self.x, valor) for valor in x]
         p = sp.lambdify(self.x, self.polinomio, 'numpy')
         tp = [p(valor) for valor in x]
@@ -47,6 +35,7 @@ class Taylor:
         plt.xlabel('x')
         plt.ylabel('y')
         plt.title('Interpolación de Taylor')
+        plt.grid()
         plt.legend()
         plt.show()
      
@@ -68,7 +57,7 @@ n = 4
 x0 = 1
 t2 = Taylor(x, fx, n, x0)
 t2.interpolacion()
-a = 0
+a = 0.1
 b = 4
 t2.graficarinterpolacion(a, b)
 
